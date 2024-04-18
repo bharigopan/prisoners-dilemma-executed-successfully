@@ -86,7 +86,7 @@ class Tournament:
 
     def display_table(self, scores):
         """
-        Displays a detailed score table showing the average scores per move for 
+        Displays a detailed score table showing the average score per move for 
         each strategy combination. Includes an overall average score for each strategy.
 
         Args:
@@ -109,25 +109,34 @@ class Tournament:
             rows.append(row)
 
         table = tabulate(rows, headers=headers, tablefmt="github", floatfmt=".2f", missingval="-")
-        logger.info("Average Scores per Move for Each Strategy Combination:")
+        logger.info("Average score per move for each strategy combination:")
         print(table)
 
     def display_plot(self, scores):
         """
-        Displays a bar plot of the average scores per strategy based on the 
+        Displays a boxplot of the score distribution per strategy based on the
         tournament results.
-
+    
         Args:
-            scores (dict): A dictionary containing the average scores per strategy.
+            scores (dict): A dictionary containing the scores per strategy.
         """
-        names = list(scores.keys())
-        values = [np.mean(scores[name]) for name in names if scores[name]]
-
-        fig, ax = plt.subplots()
-        ax.bar(names, values, color='skyblue')
+        score_lists = [scores[name] for name in scores.keys() if scores[name]]
+    
+        fig, ax = plt.subplots(figsize=(10, 6))
+    
+        ax.boxplot(score_lists, widths=0.2, patch_artist=True,
+                   boxprops=dict(facecolor="skyblue", alpha=0.8),
+                   medianprops=dict(color="black"))
+    
+        means = [np.mean(score_list) for score_list in score_lists]
+        positions = np.arange(1, len(score_lists) + 1)
+        ax.scatter(positions, means, facecolors='none', edgecolors='black', s=50, zorder=3)
+    
+        ax.set_title('Score Distribution per Strategy')
+        ax.set_xlabel('Strategy')
         ax.set_ylabel('Average Score per Move')
-        ax.set_title('Average Scores per Strategy')
-        ax.set_xticks(np.arange(len(names)))
-        ax.set_xticklabels(names, rotation=45)
+        ax.set_xticks(positions)
+        ax.set_xticklabels([name for name in scores.keys() if scores[name]], rotation=45)
+    
         plt.tight_layout()
         plt.show()
