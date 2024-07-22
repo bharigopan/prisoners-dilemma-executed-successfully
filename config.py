@@ -18,7 +18,7 @@ import os
 # Strategies selected for simulation
 selected_strategy_names = [
     'Tit for Tat', 'Always Cooperate', 'Always Defect', 'Alternate',
-    'grudger'
+    'Grudger'
 ]
 
 # Number of rounds per game
